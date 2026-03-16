@@ -1,11 +1,9 @@
 {
-  "dependencies": {
-    "@supabase/supabase-js": "^2.99.1",
-    "react-router-dom": "^7.13.1"
-  },
-  "devDependencies": {
-    "autoprefixer": "^10.4.27",
-    "postcss": "^8.5.8",
-    "tailwindcss": "^4.2.1"
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix bmad-poc run dev",
+    "build": "npm --prefix bmad-poc run build",
+    "lint": "npm --prefix bmad-poc run lint",
+    "start": "npm --prefix bmad-poc run start"
   }
 }
