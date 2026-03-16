@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+import { ArrowRight, CheckCircle2, Sparkles } from 'lucide-react'
+
 import { useAuth } from '../context/AuthContext'
 import { Button } from '../components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
-import { ArrowRight, CheckCircle2, Sparkles } from 'lucide-react'
 
 export default function Register() {
   const [email, setEmail] = useState('')
@@ -24,7 +25,6 @@ export default function Register() {
     setSuccess(false)
     setIsLoading(true)
 
-    // Validation
     if (!email || !password || !confirmPassword) {
       setError('Please fill in all fields')
       setIsLoading(false)
@@ -51,17 +51,15 @@ export default function Register() {
 
     try {
       const { error } = await signUp(email, password)
-      
       if (error) {
         setError(error)
       } else {
         setSuccess(true)
-        // Clear form
         setEmail('')
         setPassword('')
         setConfirmPassword('')
       }
-    } catch (error: any) {
+    } catch {
       setError('An unexpected error occurred. Please try again.')
     } finally {
       setIsLoading(false)
@@ -109,9 +107,7 @@ export default function Register() {
           <Card className="mx-auto w-full max-w-md border-white/10 bg-white/5 text-white shadow-xl backdrop-blur">
             <CardHeader className="space-y-2">
               <CardTitle className="text-2xl">Create account</CardTitle>
-              <CardDescription className="text-white/70">
-                Start your TaskFlow journey.
-              </CardDescription>
+              <CardDescription className="text-white/70">Start your TaskFlow journey.</CardDescription>
             </CardHeader>
             <CardContent>
               {success ? (
@@ -139,7 +135,10 @@ export default function Register() {
               ) : (
                 <form className="space-y-5" onSubmit={handleSubmit}>
                   {error && (
-                    <div className="rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-100" role="alert">
+                    <div
+                      className="rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-100"
+                      role="alert"
+                    >
                       {error}
                     </div>
                   )}
@@ -207,15 +206,15 @@ export default function Register() {
                     <ArrowRight className="h-4 w-4" />
                   </Button>
 
-                  <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center justify-center gap-2 text-sm text-white/70">
+                    <span>Already have an account?</span>
                     <button
                       type="button"
                       onClick={() => router.push('/login')}
-                      className="text-white/80 underline-offset-4 hover:text-white hover:underline"
+                      className="font-medium text-white underline-offset-4 hover:underline"
                     >
-                      Already have an account?
+                      Sign in
                     </button>
-                    <div className="text-white/50">Sign in</div>
                   </div>
 
                   <p className="text-center text-xs text-white/60">

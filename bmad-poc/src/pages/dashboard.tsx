@@ -1,14 +1,32 @@
 import { useAuth } from '../context/AuthContext'
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
 
 export default function Dashboard() {
-  const { user, signOut } = useAuth()
+  const { user, loading, signOut } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace('/login')
+    }
+  }, [loading, user, router])
 
   const handleSignOut = async () => {
     try {
       await signOut()
+      router.replace('/login')
     } catch (error) {
       console.error('Error signing out:', error)
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
+      </div>
+    )
   }
 
   return (
