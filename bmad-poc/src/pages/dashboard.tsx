@@ -15,6 +15,7 @@ function DashboardContent() {
   const { tasks, loading, saving, error, successMessage, isConfigured, sortBy, setSortBy, addTask, editTask, deleteTask, toggleTaskCompletion } = useTasks()
   const router = useRouter()
   const [isOnline, setIsOnline] = useState(true)
+  const [openComposerSignal, setOpenComposerSignal] = useState(0)
 
   const completed = tasks.filter((task) => task.is_completed).length
   const pending = tasks.length - completed
@@ -26,6 +27,11 @@ function DashboardContent() {
   const handleSignOut = async () => {
     await signOut()
     await router.replace('/login')
+  }
+
+  const focusTaskCreation = () => {
+    setOpenComposerSignal((value) => value + 1)
+    document.getElementById('quick-create')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   useEffect(() => {
@@ -58,7 +64,7 @@ function DashboardContent() {
             <div>
               <h1 className="text-3xl font-semibold tracking-tight">Task dashboard and visualization</h1>
               <p className="mt-2 max-w-2xl text-sm text-slate-400">
-                Track progress at a glance, focus on unfinished work, and manage tasks from one Next.js dashboard.
+                Track progress at a glance, keep unfinished work front and center, and add tasks without losing momentum.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
@@ -215,7 +221,7 @@ function DashboardContent() {
               <div className="space-y-3 px-6 pb-6">
                 {pendingTasks.length === 0 ? (
                   <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-5 text-sm text-emerald-100">
-                    Everything is complete. Add a new task when you are ready for the next step.
+                    Everything is complete. Add one more task when you are ready for the next step.
                   </div>
                 ) : (
                   pendingTasks.slice(0, 4).map((task) => (
@@ -290,13 +296,18 @@ function DashboardContent() {
             </Card>
 
             <div className="flex flex-col gap-6">
-              <Card className="border-slate-800 bg-slate-900/70 text-slate-50">
+              <Card id="quick-create" className="border-slate-800 bg-slate-900/70 text-slate-50">
                 <CardHeader>
                   <CardDescription className="text-slate-400">Quick create</CardDescription>
                   <CardTitle className="text-2xl">Add work without leaving the dashboard</CardTitle>
                 </CardHeader>
                 <div className="px-6 pb-6">
-                  <TaskComposer disabled={saving || !isConfigured} onSubmit={addTask} />
+                  <TaskComposer
+                    key={openComposerSignal}
+                    compact
+                    disabled={saving || !isConfigured}
+                    onSubmit={addTask}
+                  />
                 </div>
               </Card>
             </div>
@@ -305,7 +316,7 @@ function DashboardContent() {
           <section id="manage" className="flex scroll-mt-6 flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <h2 className="text-xl font-semibold">Task management</h2>
-              <p className="mt-1 text-sm text-slate-400">The full editable task list stays here, while the dashboard above keeps progress visible at a glance.</p>
+              <p className="mt-1 text-sm text-slate-400">The full editable list stays here, while the dashboard above keeps progress visible at a glance.</p>
             </div>
             <a href="#overview" className="rounded-md border border-slate-700 px-4 py-2 text-sm text-slate-200 transition hover:bg-slate-800">
               Back to overview
@@ -318,6 +329,7 @@ function DashboardContent() {
             tasks={tasks}
             loading={loading}
             busy={saving}
+            onCreateFirstTask={focusTaskCreation}
             onToggleComplete={toggleTaskCompletion}
             onEdit={editTask}
             onDelete={deleteTask}
