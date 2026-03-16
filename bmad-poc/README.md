@@ -58,4 +58,4 @@ Enable Row Level Security so users can only access their own tasks.
 
 - Expand Epic 3 dashboard visualization
 - Add automated tests for auth and task flows
-- Remove remaining unused Vite/React Router migration leftovers
+- Remove remaining unused legacy SPA migration leftovers

@@ -70,7 +70,7 @@ NFR23: System must maintain response time requirements even during peak usage pe
 
 ### Additional Requirements
 
-- **Project Initialization:** Use Vite + React + TypeScript starter template (npm create vite@latest bmad-poc -- --template react-ts)
+- **Project Initialization:** Use Next.js + TypeScript starter structure for the application in `bmad-poc/`
 - **Backend Architecture:** Supabase for complete backend-as-a-service with PostgreSQL, authentication, real-time features
 - **State Management:** React Context + useReducer for simplicity and no external dependencies
 - **Styling Solution:** Tailwind CSS v4.2 for rapid development and consistent design
@@ -79,13 +79,13 @@ NFR23: System must maintain response time requirements even during peak usage pe
 - **API Design:** Supabase RESTful APIs with real-time capabilities via Supabase Realtime
 - **Client-Server Communication:** Supabase JavaScript client library with real-time updates
 - **Hosting Strategy:** Vercel with automatic optimization, global CDN, and serverless functions
-- **CI/CD Pipeline:** Automated testing with Vitest, automatic deployment on main branch push
-- **Performance Optimization:** Vite optimized builds, Supabase caching, efficient data fetching
+- **CI/CD Pipeline:** Automated testing and automatic deployment on main branch push
+- **Performance Optimization:** Next.js optimized builds, Supabase caching, efficient data fetching
 - **Security Implementation:** Supabase built-in validation, input sanitization, JWT token-based authentication
 - **Accessibility Implementation:** Semantic HTML, ARIA labels, keyboard navigation, WCAG AA compliance
 - **Mobile Responsiveness:** Responsive design implementation for consistent experience across devices
 - **Project Organization:** Feature-based organization with clear separation of concerns
-- **Testing Framework:** Vitest for unit testing with Jest-compatible API and component testing
+- **Testing Framework:** Next.js-compatible unit and component testing setup
 
 ### UX Design Requirements
 
@@ -159,7 +159,7 @@ FR28: Epic 5 - User Experience & Accessibility
 **Goal:** Ensure the application works seamlessly across modern browsers and devices with fast loading times and consistent availability.
 **FRs covered:** FR18, FR19, FR20, FR21, FR22
 **NFRs addressed:** NFR1, NFR2, NFR3, NFR4, NFR5, NFR18, NFR19, NFR20, NFR21, NFR22, NFR23
-**Implementation Notes:** Responsive design with Tailwind CSS, Vite optimization, Vercel hosting, performance monitoring
+**Implementation Notes:** Responsive design with Tailwind CSS, Next.js optimization, Vercel hosting, performance monitoring
 
 ### Epic 5: User Experience & Accessibility
 **Goal:** Create an accessible, user-friendly interface that reduces decision fatigue and enables immediate value delivery with fast task creation.
