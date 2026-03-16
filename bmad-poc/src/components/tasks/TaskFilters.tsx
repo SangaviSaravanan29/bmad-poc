@@ -1,3 +1,5 @@
+import { ChevronDown } from 'lucide-react'
+
 import type { TaskSort } from '../../services/tasks'
 
 interface TaskFiltersProps {
@@ -25,16 +27,19 @@ export function TaskFilters({ total, completed, pending, sortBy, onSortChange }:
 
       <label className="flex items-center gap-3 text-sm text-slate-300" htmlFor="task-sort">
         <span>Organize by</span>
-        <select
-          id="task-sort"
-          value={sortBy}
-          onChange={(event) => onSortChange(event.target.value as TaskSort)}
-          className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400"
-        >
-          <option value="newest">Newest first</option>
-          <option value="oldest">Oldest first</option>
-          <option value="status">Completion status</option>
-        </select>
+        <div className="relative">
+          <select
+            id="task-sort"
+            value={sortBy}
+            onChange={(event) => onSortChange(event.target.value as TaskSort)}
+            className="min-h-11 appearance-none rounded-md border border-slate-700 bg-slate-950 py-2 pl-3 pr-11 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400"
+          >
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="status">Completion status</option>
+          </select>
+          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        </div>
       </label>
     </div>
   )

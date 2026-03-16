@@ -10,6 +10,7 @@ interface TaskContextValue {
   loading: boolean
   saving: boolean
   error: string | null
+  successMessage: string | null
   sortBy: TaskSort
   isConfigured: boolean
   setSortBy: (sortBy: TaskSort) => void
@@ -25,6 +26,7 @@ interface TaskState {
   loading: boolean
   saving: boolean
   error: string | null
+  successMessage: string | null
   sortBy: TaskSort
 }
 
@@ -34,6 +36,7 @@ type TaskAction =
   | { type: 'save:start' }
   | { type: 'save:end' }
   | { type: 'error'; error: string | null }
+  | { type: 'success'; message: string | null }
   | { type: 'sort:set'; sortBy: TaskSort }
   | { type: 'reset' }
 
@@ -42,6 +45,7 @@ const initialState: TaskState = {
   loading: true,
   saving: false,
   error: null,
+  successMessage: null,
   sortBy: 'newest',
 }
 
@@ -52,11 +56,13 @@ function taskReducer(state: TaskState, action: TaskAction): TaskState {
     case 'load:success':
       return { ...state, loading: false, tasks: action.tasks, error: null }
     case 'save:start':
-      return { ...state, saving: true, error: null }
+      return { ...state, saving: true, error: null, successMessage: null }
     case 'save:end':
       return { ...state, saving: false }
     case 'error':
       return { ...state, loading: false, saving: false, error: action.error }
+    case 'success':
+      return { ...state, successMessage: action.message, error: null }
     case 'sort:set':
       return { ...state, sortBy: action.sortBy }
     case 'reset':
@@ -108,12 +114,13 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     return unsubscribe
   }, [user?.id, state.sortBy])
 
-  const runTaskMutation = async (action: () => Promise<void>) => {
+  const runTaskMutation = async (action: () => Promise<void>, successMessage: string) => {
     dispatch({ type: 'save:start' })
 
     try {
       await action()
       await refreshTasks()
+      dispatch({ type: 'success', message: successMessage })
     } catch (error) {
       dispatch({ type: 'error', error: error instanceof Error ? error.message : 'Task action failed.' })
       throw error
@@ -129,7 +136,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
 
     await runTaskMutation(async () => {
       await createTask(user.id, input)
-    })
+    }, 'Task created successfully.')
   }
 
   const editTask = async (taskId: number, input: TaskInput) => {
@@ -139,7 +146,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
 
     await runTaskMutation(async () => {
       await updateTask(taskId, user.id, input)
-    })
+    }, 'Task updated successfully.')
   }
 
   const toggleTaskCompletion = async (taskId: number, isCompleted: boolean) => {
@@ -149,7 +156,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
 
     await runTaskMutation(async () => {
       await updateTaskCompletion(taskId, user.id, isCompleted)
-    })
+    }, isCompleted ? 'Task marked as completed.' : 'Task moved back to pending.')
   }
 
   const deleteTask = async (taskId: number) => {
@@ -159,7 +166,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
 
     await runTaskMutation(async () => {
       await removeTask(taskId, user.id)
-    })
+    }, 'Task deleted successfully.')
   }
 
   const value: TaskContextValue = {
@@ -167,6 +174,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     loading: state.loading,
     saving: state.saving,
     error: state.error,
+    successMessage: state.successMessage,
     sortBy: state.sortBy,
     isConfigured: isSupabaseConfigured,
     setSortBy: (sortBy) => dispatch({ type: 'sort:set', sortBy }),

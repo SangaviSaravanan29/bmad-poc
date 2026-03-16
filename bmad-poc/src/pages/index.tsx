@@ -1,15 +1,18 @@
 import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 
 export default function Home() {
   const { user } = useAuth()
   const router = useRouter()
 
-  // Redirect authenticated users to dashboard
-  if (user) {
-    router.push('/dashboard')
-    return null
-  }
+  useEffect(() => {
+    if (user) {
+      void router.replace('/dashboard')
+    }
+  }, [router, user])
+
+  if (user) return null
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

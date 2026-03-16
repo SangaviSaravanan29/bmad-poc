@@ -117,7 +117,7 @@ export function TaskItem({ task, busy = false, onToggleComplete, onEdit, onDelet
                 <button
                   type="button"
                   onClick={() => void onToggleComplete(task.id, !task.is_completed)}
-                  className="mt-1 text-slate-300 transition hover:text-white focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-900"
+                  className="mt-1 min-h-11 min-w-11 rounded-full text-slate-300 transition hover:bg-slate-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-900"
                   aria-label={task.is_completed ? `Mark ${task.title} as incomplete` : `Mark ${task.title} as complete`}
                   disabled={busy}
                 >
@@ -145,11 +145,11 @@ export function TaskItem({ task, busy = false, onToggleComplete, onEdit, onDelet
               </div>
 
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="border-slate-700 text-slate-200 hover:bg-slate-800" onClick={() => setIsEditing(true)} disabled={busy}>
+                <Button variant="outline" size="sm" className="min-h-11 border-slate-700 text-slate-200 hover:bg-slate-800" onClick={() => setIsEditing(true)} disabled={busy}>
                   <Pencil className="h-4 w-4" />
                   Edit
                 </Button>
-                <Button variant="outline" size="sm" className="border-red-500/40 text-red-200 hover:bg-red-500/10" onClick={() => void handleDelete()} disabled={busy}>
+                <Button variant="outline" size="sm" className="min-h-11 border-red-500/40 text-red-200 hover:bg-red-500/10" onClick={() => void handleDelete()} disabled={busy}>
                   <Trash2 className="h-4 w-4" />
                   Delete
                 </Button>

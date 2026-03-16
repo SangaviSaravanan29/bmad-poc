@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Plus, X } from 'lucide-react'
 
 import { Button } from '../ui/button'
@@ -11,17 +11,58 @@ interface TaskComposerProps {
   onSubmit: (input: { title: string; description: string }) => Promise<void>
 }
 
+const TASK_DRAFT_KEY = 'taskflow-task-draft'
+
 export function TaskComposer({ disabled = false, onSubmit }: TaskComposerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [error, setError] = useState<string | null>(null)
 
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    const savedDraft = window.localStorage.getItem(TASK_DRAFT_KEY)
+
+    if (!savedDraft) {
+      return
+    }
+
+    try {
+      const draft = JSON.parse(savedDraft) as { title?: string; description?: string }
+      if (draft.title || draft.description) {
+        setTitle(draft.title ?? '')
+        setDescription(draft.description ?? '')
+        setIsOpen(true)
+      }
+    } catch {
+      window.localStorage.removeItem(TASK_DRAFT_KEY)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    if (!title && !description) {
+      window.localStorage.removeItem(TASK_DRAFT_KEY)
+      return
+    }
+
+    window.localStorage.setItem(TASK_DRAFT_KEY, JSON.stringify({ title, description }))
+  }, [title, description])
+
   const resetForm = () => {
     setTitle('')
     setDescription('')
     setError(null)
     setIsOpen(false)
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem(TASK_DRAFT_KEY)
+    }
   }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -45,7 +86,7 @@ export function TaskComposer({ disabled = false, onSubmit }: TaskComposerProps) 
 
   if (!isOpen) {
     return (
-      <Button className="w-full sm:w-auto" onClick={() => setIsOpen(true)}>
+      <Button className="min-h-11 w-full sm:w-auto" onClick={() => setIsOpen(true)}>
         <Plus className="h-4 w-4" />
         Add task
       </Button>
@@ -56,7 +97,7 @@ export function TaskComposer({ disabled = false, onSubmit }: TaskComposerProps) 
     <Card className="border-slate-800 bg-slate-900/80 text-slate-50">
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-lg">Create a new task</CardTitle>
-        <Button variant="ghost" size="icon" className="text-slate-300 hover:bg-slate-800 hover:text-white" onClick={resetForm}>
+        <Button variant="ghost" size="icon" className="min-h-11 min-w-11 text-slate-300 hover:bg-slate-800 hover:text-white" onClick={resetForm}>
           <X className="h-4 w-4" />
           <span className="sr-only">Close task form</span>
         </Button>
@@ -68,6 +109,10 @@ export function TaskComposer({ disabled = false, onSubmit }: TaskComposerProps) 
               {error}
             </div>
           ) : null}
+
+          <div className="rounded-md border border-slate-800 bg-slate-950/60 px-3 py-2 text-xs text-slate-400">
+            Draft is saved locally until the task is created or canceled.
+          </div>
 
           <div className="space-y-2">
             <Label htmlFor="task-title" className="text-slate-100">
@@ -99,10 +144,10 @@ export function TaskComposer({ disabled = false, onSubmit }: TaskComposerProps) 
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button type="submit" disabled={disabled} className="sm:min-w-36">
+            <Button type="submit" disabled={disabled} className="min-h-11 sm:min-w-36">
               {disabled ? 'Saving...' : 'Save task'}
             </Button>
-            <Button type="button" variant="outline" disabled={disabled} className="border-slate-700 text-slate-200 hover:bg-slate-800" onClick={resetForm}>
+            <Button type="button" variant="outline" disabled={disabled} className="min-h-11 border-slate-700 text-slate-200 hover:bg-slate-800" onClick={resetForm}>
               Cancel
             </Button>
           </div>

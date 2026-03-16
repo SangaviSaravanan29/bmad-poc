@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { Activity, ArrowDownRight, CheckCircle2, Clock3, ListTodo, LogOut, Target } from 'lucide-react'
 
@@ -12,8 +12,9 @@ import { useTasks } from '../context/TaskContext'
 
 function DashboardContent() {
   const { user, signOut } = useAuth()
-  const { tasks, loading, saving, error, isConfigured, sortBy, setSortBy, addTask, editTask, deleteTask, toggleTaskCompletion } = useTasks()
+  const { tasks, loading, saving, error, successMessage, isConfigured, sortBy, setSortBy, addTask, editTask, deleteTask, toggleTaskCompletion } = useTasks()
   const router = useRouter()
+  const [isOnline, setIsOnline] = useState(true)
 
   const completed = tasks.filter((task) => task.is_completed).length
   const pending = tasks.length - completed
@@ -26,6 +27,23 @@ function DashboardContent() {
     await signOut()
     await router.replace('/login')
   }
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    const syncStatus = () => setIsOnline(window.navigator.onLine)
+
+    syncStatus()
+    window.addEventListener('online', syncStatus)
+    window.addEventListener('offline', syncStatus)
+
+    return () => {
+      window.removeEventListener('online', syncStatus)
+      window.removeEventListener('offline', syncStatus)
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
@@ -43,7 +61,22 @@ function DashboardContent() {
                 Track progress at a glance, focus on unfinished work, and manage tasks from one Next.js dashboard.
               </p>
             </div>
-            <p className="text-sm text-slate-500">Signed in as {user?.email}</p>
+            <div className="flex flex-wrap items-center gap-3">
+              <p className="text-sm text-slate-500">Signed in as {user?.email}</p>
+              <span
+                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${
+                  isOnline ? 'bg-emerald-500/15 text-emerald-200' : 'bg-red-500/15 text-red-200'
+                }`}
+              >
+                <span
+                  className={`mr-2 h-2 w-2 rounded-full ${
+                    isOnline ? 'bg-emerald-400' : 'bg-red-400'
+                  }`}
+                  aria-hidden="true"
+                />
+                {isOnline ? 'Online' : 'Offline'}
+              </span>
+            </div>
           </div>
 
           <Button variant="outline" className="border-slate-700 text-slate-100 hover:bg-slate-800" onClick={() => void handleSignOut()}>
@@ -149,6 +182,12 @@ function DashboardContent() {
         </section>
 
         <main className="mt-8 space-y-6">
+          {!isOnline ? (
+            <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100" role="status">
+              You are offline. Existing dashboard state remains visible, and task drafts stay on this device until the connection returns.
+            </div>
+          ) : null}
+
           {!isConfigured ? (
             <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
               Configure `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` to enable Epic 2 task storage.
@@ -158,6 +197,12 @@ function DashboardContent() {
           {error ? (
             <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-100" role="alert">
               {error}
+            </div>
+          ) : null}
+
+          {successMessage ? (
+            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100" role="status">
+              {successMessage}
             </div>
           ) : null}
 
